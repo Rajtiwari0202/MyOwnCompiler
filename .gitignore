@@ -1,8 +1,13 @@
 build/
 
+.vs/
 .vscode/
 
 *.o
 *.obj
 *.exe
 *.out
+*.pdb
+*.ilk
+*.vcxproj*
+*.sln
