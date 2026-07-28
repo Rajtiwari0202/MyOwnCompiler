@@ -2,10 +2,11 @@
 
 #include "lexer/lexer.h"
 
-int main()
+void runTest(const std::string& source)
 {
-    std::string source =
-        "let x = 10;";
+    std::cout << "\n========================\n";
+    std::cout << source << "\n";
+    std::cout << "========================\n";
 
     Lexer lexer(source);
 
@@ -14,11 +15,24 @@ int main()
     for (const auto& token : tokens)
     {
         std::cout
-            << static_cast<int>(token.type)
-            << " : "
+            << tokenTypeToString(token.type)
+            << "\t\t"
             << token.lexeme
             << '\n';
     }
+}
+
+int main()
+{
+    runTest("let x = 10 + 5 * 2;");
+
+    runTest("(10 + 20)");
+
+    runTest("{ }");
+
+    runTest("if while print let");
+
+    runTest("count studentName x1 _temp");
 
     return 0;
 }

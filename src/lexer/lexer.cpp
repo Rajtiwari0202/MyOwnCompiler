@@ -2,7 +2,7 @@
 
 #include <cctype>
 
-Lexer::Lexer(const std::string& source)
+Lexer::Lexer(const std::string &source)
     : source(source),
       current(0)
 {
@@ -113,6 +113,22 @@ std::vector<Token> Lexer::tokenize()
 
         switch (advance())
         {
+        case '+':
+            tokens.emplace_back(TokenType::Plus, "+");
+            break;
+
+        case '-':
+            tokens.emplace_back(TokenType::Minus, "-");
+            break;
+
+        case '*':
+            tokens.emplace_back(TokenType::Star, "*");
+            break;
+
+        case '/':
+            tokens.emplace_back(TokenType::Slash, "/");
+            break;
+
         case '=':
             tokens.emplace_back(TokenType::Equal, "=");
             break;
@@ -121,19 +137,33 @@ std::vector<Token> Lexer::tokenize()
             tokens.emplace_back(TokenType::Semicolon, ";");
             break;
 
+        case '(':
+            tokens.emplace_back(TokenType::LeftParen, "(");
+            break;
+
+        case ')':
+            tokens.emplace_back(TokenType::RightParen, ")");
+            break;
+
+        case '{':
+            tokens.emplace_back(TokenType::LeftBrace, "{");
+            break;
+
+        case '}':
+            tokens.emplace_back(TokenType::RightBrace, "}");
+            break;
+
         default:
             tokens.emplace_back(
                 TokenType::Unknown,
-                std::string(1, c)
-            );
+                std::string(1, c));
             break;
         }
     }
 
     tokens.emplace_back(
         TokenType::EndOfFile,
-        ""
-    );
+        "");
 
     return tokens;
 }
