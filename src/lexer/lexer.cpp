@@ -2,9 +2,11 @@
 
 #include <cctype>
 
-Lexer::Lexer(const std::string &source)
+Lexer::Lexer(const std::string& source)
     : source(source),
-      current(0)
+      current(0),
+      line(1),
+      column(1)
 {
 }
 
@@ -15,7 +17,19 @@ bool Lexer::isAtEnd() const
 
 char Lexer::advance()
 {
-    return source[current++];
+    char c = source[current++];
+
+    if (c == '\n')
+    {
+        line++;
+        column = 1;
+    }
+    else
+    {
+        column++;
+    }
+
+    return c;
 }
 
 char Lexer::peek() const
@@ -26,6 +40,22 @@ char Lexer::peek() const
     }
 
     return source[current];
+}
+
+bool Lexer::isCommentStart() const
+{
+    if (isAtEnd())
+        return false;
+
+    if (peek() != '/')
+        return false;
+
+    if (current + 1 >= source.length())
+        return false;
+
+    char next = source[current + 1];
+
+    return next == '/' || next == '*';
 }
 
 void Lexer::skipWhitespace()
@@ -44,6 +74,52 @@ void Lexer::skipWhitespace()
         else
         {
             break;
+        }
+    }
+}
+
+void Lexer::skipComment()
+{
+    if (!isCommentStart())
+        return;
+
+    char next = source[current + 1];
+
+    // Single-line comment
+    if (next == '/')
+    {
+        advance();
+        advance();
+
+        while (!isAtEnd() &&
+               peek() != '\n')
+        {
+            advance();
+        }
+
+        if (!isAtEnd())
+        {
+            advance();
+        }
+    }
+    // Multi-line comment
+    else if (next == '*')
+    {
+        advance();
+        advance();
+
+        while (!isAtEnd())
+        {
+            if (peek() == '*' &&
+                current + 1 < source.length() &&
+                source[current + 1] == '/')
+            {
+                advance();
+                advance();
+                break;
+            }
+
+            advance();
         }
     }
 }
@@ -92,7 +168,18 @@ std::vector<Token> Lexer::tokenize()
 
     while (!isAtEnd())
     {
-        skipWhitespace();
+        while (true)
+        {
+            skipWhitespace();
+
+            if (isCommentStart())
+            {
+                skipComment();
+                continue;
+            }
+
+            break;
+        }
 
         if (isAtEnd())
             break;

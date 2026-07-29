@@ -1,0 +1,11 @@
+// variables
+
+let x = 10;
+let y = 20;
+
+/*
+multi line
+comment
+*/
+
+print(x);
