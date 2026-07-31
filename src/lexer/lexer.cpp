@@ -1,6 +1,8 @@
 #include "lexer.h"
 
 #include <cctype>
+#include <cstdlib>
+#include <iostream>
 
 Lexer::Lexer(const std::string& source)
     : source(source),
@@ -162,6 +164,68 @@ Token Lexer::number()
     return Token(TokenType::Number, value);
 }
 
+Token Lexer::stringLiteral()
+{
+    advance();
+
+    std::string value;
+
+    while (!isAtEnd() &&
+           peek() != '"')
+    {
+        value += advance();
+    }
+
+    if (isAtEnd())
+    {
+        std::cerr
+            << "Lexer Error\n"
+            << "Line "
+            << line
+            << ", Column "
+            << column
+            << "\n\n"
+            << "Unterminated string literal\n";
+
+        std::exit(1);
+    }
+
+    advance();
+
+    return Token(
+        TokenType::String,
+        value);
+}
+
+Token Lexer::characterLiteral()
+{
+    advance();
+
+    if (isAtEnd())
+    {
+        std::cerr
+            << "Invalid character literal\n";
+
+        std::exit(1);
+    }
+
+    char value = advance();
+
+    if (isAtEnd() || peek() != '\'')
+    {
+        std::cerr
+            << "Invalid character literal\n";
+
+        std::exit(1);
+    }
+
+    advance();
+
+    return Token(
+        TokenType::Character,
+        std::string(1, value));
+}
+
 std::vector<Token> Lexer::tokenize()
 {
     std::vector<Token> tokens;
@@ -186,15 +250,35 @@ std::vector<Token> Lexer::tokenize()
 
         char c = peek();
 
+        if (c == '"')
+        {
+            tokens.push_back(
+                stringLiteral());
+
+            continue;
+        }
+
+        if (c == '\'')
+        {
+            tokens.push_back(
+                characterLiteral());
+
+            continue;
+        }
+
         if (std::isalpha(c) || c == '_')
         {
-            tokens.push_back(identifier());
+            tokens.push_back(
+                identifier());
+
             continue;
         }
 
         if (std::isdigit(c))
         {
-            tokens.push_back(number());
+            tokens.push_back(
+                number());
+
             continue;
         }
 
@@ -241,10 +325,20 @@ std::vector<Token> Lexer::tokenize()
             break;
 
         default:
-            tokens.emplace_back(
-                TokenType::Unknown,
-                std::string(1, c));
-            break;
+        {
+            std::cerr
+                << "Lexer Error\n"
+                << "Line "
+                << line
+                << ", Column "
+                << column
+                << "\n\n"
+                << "Unexpected character '"
+                << c
+                << "'\n";
+
+            std::exit(1);
+        }
         }
     }
 

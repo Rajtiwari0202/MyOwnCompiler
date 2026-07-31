@@ -7,6 +7,8 @@ enum class TokenType
     // literals
     Identifier,
     Number,
+    String,
+    Character,
 
     // operators
     Plus,
@@ -43,4 +45,5 @@ struct Token
     {
     }
 };
+
 std::string tokenTypeToString(TokenType type);

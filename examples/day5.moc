@@ -1,0 +1,3 @@
+print("Hello Compiler");
+
+let grade = 'A';

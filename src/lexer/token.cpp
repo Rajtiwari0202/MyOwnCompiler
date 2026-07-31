@@ -10,6 +10,12 @@ std::string tokenTypeToString(TokenType type)
         case TokenType::Number:
             return "NUMBER";
 
+        case TokenType::String:
+            return "STRING";
+
+        case TokenType::Character:
+            return "CHARACTER";
+
         case TokenType::Plus:
             return "PLUS";
 

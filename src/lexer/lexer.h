@@ -36,4 +36,8 @@ private:
     Token identifier();
 
     Token number();
+
+    Token stringLiteral();
+
+    Token characterLiteral();
 };
