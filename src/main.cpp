@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "lexer/lexer.h"
+#include "parser/parser.h"
 
 int main(int argc, char* argv[])
 {
@@ -25,20 +26,26 @@ int main(int argc, char* argv[])
     }
 
     std::stringstream buffer;
+
     buffer << file.rdbuf();
 
     Lexer lexer(buffer.str());
 
-    auto tokens = lexer.tokenize();
+    auto tokens =
+        lexer.tokenize();
 
-    for (const auto& token : tokens)
-    {
-        std::cout
-            << tokenTypeToString(token.type)
-            << "\t"
-            << token.lexeme
-            << '\n';
-    }
+    Parser parser(tokens);
+
+    auto ast =
+        parser.parsePrintStatement();
+
+    std::cout
+        << "Parsed Print Statement\n";
+
+    std::cout
+        << "String Value: "
+        << ast->expression->value
+        << '\n';
 
     return 0;
 }
