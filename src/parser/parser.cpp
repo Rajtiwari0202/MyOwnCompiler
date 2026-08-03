@@ -31,30 +31,35 @@ const Token& Parser::advance()
 std::unique_ptr<PrintStatementNode>
 Parser::parsePrintStatement()
 {
-    // print
+    advance(); // print
 
-    advance();
-
-    // (
-
-    advance();
-
-    // string
+    advance(); // (
 
     std::string value =
         advance().lexeme;
 
-    // )
+    advance(); // )
 
-    advance();
-
-    // ;
-
-    advance();
+    advance(); // ;
 
     return std::make_unique<
         PrintStatementNode>(
         std::make_unique<
             StringLiteralNode>(
             value));
+}
+
+std::unique_ptr<ProgramNode>
+Parser::parse()
+{
+    auto program =
+        std::make_unique<ProgramNode>();
+
+    while (!isAtEnd())
+    {
+        program->statements.push_back(
+            parsePrintStatement());
+    }
+
+    return program;
 }

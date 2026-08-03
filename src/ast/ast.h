@@ -2,11 +2,18 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 class ASTNode
 {
 public:
     virtual ~ASTNode() = default;
+};
+
+class StatementNode : public ASTNode
+{
+public:
+    virtual ~StatementNode() = default;
 };
 
 class StringLiteralNode : public ASTNode
@@ -21,7 +28,7 @@ public:
     }
 };
 
-class PrintStatementNode : public ASTNode
+class PrintStatementNode : public StatementNode
 {
 public:
     std::unique_ptr<StringLiteralNode> expression;
@@ -31,4 +38,12 @@ public:
         : expression(std::move(expression))
     {
     }
+};
+
+class ProgramNode : public ASTNode
+{
+public:
+    std::vector<
+        std::unique_ptr<StatementNode>
+    > statements;
 };

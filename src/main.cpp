@@ -4,6 +4,7 @@
 
 #include "lexer/lexer.h"
 #include "parser/parser.h"
+#include "ast/ast.h"
 
 int main(int argc, char* argv[])
 {
@@ -36,16 +37,38 @@ int main(int argc, char* argv[])
 
     Parser parser(tokens);
 
-    auto ast =
-        parser.parsePrintStatement();
+    auto program =
+        parser.parse();
 
     std::cout
-        << "Parsed Print Statement\n";
+        << "Program Parsed Successfully\n";
 
     std::cout
-        << "String Value: "
-        << ast->expression->value
-        << '\n';
+        << "Statement Count: "
+        << program->statements.size()
+        << "\n\n";
+
+    for (size_t i = 0;
+         i < program->statements.size();
+         i++)
+    {
+        auto* printStmt =
+            dynamic_cast<
+                PrintStatementNode*>(
+                    program->statements[i].get());
+
+        if (printStmt)
+        {
+            std::cout
+                << "Print Statement "
+                << i + 1
+                << ": "
+                << printStmt
+                       ->expression
+                       ->value
+                << '\n';
+        }
+    }
 
     return 0;
 }
