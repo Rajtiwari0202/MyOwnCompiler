@@ -21,6 +21,9 @@ public:
     parse();
 
 private:
+    std::unique_ptr<ExpressionNode>
+    parseExpression();
+
     std::unique_ptr<PrintStatementNode>
     parsePrintStatement();
 

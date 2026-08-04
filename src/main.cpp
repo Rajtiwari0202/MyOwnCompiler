@@ -27,18 +27,15 @@ int main(int argc, char* argv[])
     }
 
     std::stringstream buffer;
-
     buffer << file.rdbuf();
 
     Lexer lexer(buffer.str());
 
-    auto tokens =
-        lexer.tokenize();
+    auto tokens = lexer.tokenize();
 
     Parser parser(tokens);
 
-    auto program =
-        parser.parse();
+    auto program = parser.parse();
 
     std::cout
         << "Program Parsed Successfully\n";
@@ -57,15 +54,44 @@ int main(int argc, char* argv[])
                 PrintStatementNode*>(
                     program->statements[i].get());
 
-        if (printStmt)
+        if (!printStmt)
+        {
+            continue;
+        }
+
+        auto* stringExpr =
+            dynamic_cast<
+                StringLiteralNode*>(
+                    printStmt
+                        ->expression
+                        .get());
+
+        if (stringExpr)
         {
             std::cout
                 << "Print Statement "
                 << i + 1
-                << ": "
-                << printStmt
-                       ->expression
-                       ->value
+                << " (STRING): "
+                << stringExpr->value
+                << '\n';
+
+            continue;
+        }
+
+        auto* numberExpr =
+            dynamic_cast<
+                NumberLiteralNode*>(
+                    printStmt
+                        ->expression
+                        .get());
+
+        if (numberExpr)
+        {
+            std::cout
+                << "Print Statement "
+                << i + 1
+                << " (NUMBER): "
+                << numberExpr->value
                 << '\n';
         }
     }

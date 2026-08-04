@@ -10,13 +10,19 @@ public:
     virtual ~ASTNode() = default;
 };
 
+class ExpressionNode : public ASTNode
+{
+public:
+    virtual ~ExpressionNode() = default;
+};
+
 class StatementNode : public ASTNode
 {
 public:
     virtual ~StatementNode() = default;
 };
 
-class StringLiteralNode : public ASTNode
+class StringLiteralNode : public ExpressionNode
 {
 public:
     std::string value;
@@ -28,13 +34,24 @@ public:
     }
 };
 
+class NumberLiteralNode : public ExpressionNode
+{
+public:
+    int value;
+
+    explicit NumberLiteralNode(int value)
+        : value(value)
+    {
+    }
+};
+
 class PrintStatementNode : public StatementNode
 {
 public:
-    std::unique_ptr<StringLiteralNode> expression;
+    std::unique_ptr<ExpressionNode> expression;
 
     explicit PrintStatementNode(
-        std::unique_ptr<StringLiteralNode> expression)
+        std::unique_ptr<ExpressionNode> expression)
         : expression(std::move(expression))
     {
     }
